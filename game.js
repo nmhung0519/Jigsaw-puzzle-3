@@ -6,7 +6,7 @@ var target = null;
 var direction = 0;
 var canClick = 1;
 var a = new Audio('E:/Music/Simple love - obito (W-n Remix) , Cover Duongg , Tien.mp3');
-var pieces = new Array();
+var pieces;
 var n;	// number of rows
 var m;	// number of columns
 const frameWidth = 960;
@@ -80,6 +80,7 @@ function play(target) {
 	menu.appendChild(play_header);
 	play_container.style.animationName = 'enter';
 	play_header.style.animationName = 'enter';
+	pieces = null;
 	setTimeout(function () {
 		container_pre.style.display = 'none';
 		header_pre.style.display = 'none';
@@ -109,6 +110,10 @@ addEventListener("mouseup", function (t) {
 				target[i].style.transform = 'scale(1)';
 				target[i].style.top = '0px';
 			}
+		}
+		for (var i = 0; target[i] != null; i++) {
+			target[i].style.transform = 'scale(1)';
+			target[i].style.left = '0px';
         }
 	}
 	removeEventListener("mousemove", move);
@@ -172,6 +177,7 @@ function selectTarget(_target) {
     }
 }
 function createImage(file) {
+	pieces = new Array();
 	for (var i = 0; i < n; i++) {
 		pieces[i] = new Array();
 		for (var j = 0; j < m; j++) {
@@ -188,16 +194,40 @@ function createImage(file) {
 			tmp.style.backgroundPositionX = -(j * (frameWidth / m)) + "px";
 			tmp.style.backgroundPositionY = -(i * (frameHeight / n)) + 'px';
 			tmp.style.position = 'relative';
+			tmp.setAttribute('x', i);
+			tmp.setAttribute('y', j);
 			pieces[i][j].appendChild(tmp);
 		}
 	}
+	mixImage(1, 1);
 }
-function mixImage() {
+function mixImage(a, b) {
+	for (var i = 0; i < a; i++) {
+		var tmp1 = randomInt(n);
+		var tmp2 = randomInt(n);
+		console.log(tmp1, tmp2);
+		while (tmp1 == tmp2) tmp2 = randomInt(n);
+		for (var j = 0; j < m; j++) wrapImg(tmp1, j, tmp2, j);
 
+	}
+	for (var i = 0; i < b; i++) {
+		var tmp1 = randomInt(m);
+		var tmp2 = randomInt(m);
+		console.log(tmp1, tmp2);
+		while (tmp1 == tmp2) tmp2 = randomInt(m);
+		for (var j = 0; j < n; j++) wrapImg(j, tmp1, j, tmp2);
+    }
+}
+function wrapImg(n1, m1, n2, m2) {
+	pieces[n1][m1].appendChild(pieces[n2][m2].children[0]);
+	pieces[n2][m2].appendChild(pieces[n1][m1].children[0]);
 }
 function getRow(node) {
 	return new Number((node.style.top).slice(0, -2)) / (frameHeight / n);
 }
 function getCol(node) {
 	return new Number((node.style.left).slice(0, -2)) / (frameWidth / m);
+}
+function randomInt(a) {
+	return Math.floor(Math.random() * a);
 }
