@@ -99,21 +99,11 @@ addEventListener("mousedown", function (event) {
 })
 addEventListener("mouseup", function (t) {
 	if (target != null) {
-		if (direction == 1) {
-			for (var i = 0; i < n; i++) {
-				target[i].style.transform = 'scale(1)';
-				target[i].style.left = '0px';
-			}
-		}
-		else if (direction == 2) {
-			for (var i = 0; i < m; i++) {
-				target[i].style.transform = 'scale(1)';
-				target[i].style.top = '0px';
-			}
-		}
 		for (var i = 0; target[i] != null; i++) {
 			target[i].style.transform = 'scale(1)';
 			target[i].style.left = '0px';
+			target[i].style.top = '0px';
+			target[i] = null;
         }
 	}
 	removeEventListener("mousemove", move);
@@ -133,16 +123,15 @@ function move(event) {
 	}
 	if (direction == 1) {
 		if (event.screenX != x) {
-			for (var i = 0; i < n; i++) {
-				var tmp = tmpX[i] + (event.screenX - x);
-				target[i].style.left = tmp + "px";
+			var d = event.screenX - x;
+			for (var i = 0; i < target.length; i++) {
+				target[i].style.left = tmpX[i] + d + "px";
 			}
-
 		}
 	}
 	else if (direction == 2) {
 		if (event.screenY != y) {
-			for (var i = 0; i < m; i++) {
+			for (var i = 0; i < target.length; i++) {
 				var tmp = tmpY[i] + (event.screenY - y);
 				target[i].style.top = tmp + "px";
 			}
@@ -150,19 +139,14 @@ function move(event) {
 	}
 }
 function selectTarget(_target) {
-	console.log(_target);
 	if (direction == 1) {
 		tmpX = new Array();
 		tmpY = new Array();
 		target = new Array();
 		var col = getCol(_target.parentElement);
-		for (var i = 0; i < n; i++) {
-			target[i] = pieces[i][col].children[0];
-			frame.appendChild(pieces[i][col]);
-			target[i].style.transform = 'scale(1.02)';
-			tmpX[i] = 0;
-			tmpY[i] = 0;
-		}
+		selectCol(col);
+		checkCol(col, 1);
+		checkCol(col, -1);
 	}
 	else if (direction == 2) {
 		tmpY = new Array();
@@ -171,10 +155,33 @@ function selectTarget(_target) {
 		for (var i = 0; i < m; i++) {
 			target[i] = pieces[row][i].children[0];
 			frame.appendChild(pieces[row][i]);
-			target[i].style.transform = 'scale(1.02)';
+			target[i].style.transform = 'scale(1.01)';
 			tmpY[i] = 0;
+			checkRow(row, 1);
+			checkRow(row, -1);
         }
-    }
+	}
+	function checkCol(tmp_col, r) {
+		if (tmp_col + r >= 0 && tmp_col + r < m) {
+			if (parseInt(pieces[0][tmp_col].children[0].getAttribute('y')) + r == parseInt(pieces[0][tmp_col + r].children[0].getAttribute('y'))) {
+				selectCol(tmp_col + r);
+				checkCol(tmp_col + r, r);
+			}
+		}
+	}
+	function checkRow(tmp_col, r) {
+
+	}
+	function selectCol(tmp_col) {
+		for (var i = 0; i < n; i++) {
+			target[target.length] = pieces[i][tmp_col].children[0];
+			frame.appendChild(pieces[i][tmp_col]);
+			target[target.length - 1].style.transform = 'scale(1.01)';
+			tmpX[target.length - 1] = 0;
+			tmpY[target.lenght - 1] = 0;
+		}
+	}
+	function selectRow(tmp_col) {}
 }
 function createImage(file) {
 	pieces = new Array();
@@ -197,6 +204,7 @@ function createImage(file) {
 			tmp.setAttribute('x', i);
 			tmp.setAttribute('y', j);
 			pieces[i][j].appendChild(tmp);
+
 		}
 	}
 	mixImage(1, 1);
@@ -205,7 +213,6 @@ function mixImage(a, b) {
 	for (var i = 0; i < a; i++) {
 		var tmp1 = randomInt(n);
 		var tmp2 = randomInt(n);
-		console.log(tmp1, tmp2);
 		while (tmp1 == tmp2) tmp2 = randomInt(n);
 		for (var j = 0; j < m; j++) wrapImg(tmp1, j, tmp2, j);
 
@@ -213,7 +220,6 @@ function mixImage(a, b) {
 	for (var i = 0; i < b; i++) {
 		var tmp1 = randomInt(m);
 		var tmp2 = randomInt(m);
-		console.log(tmp1, tmp2);
 		while (tmp1 == tmp2) tmp2 = randomInt(m);
 		for (var j = 0; j < n; j++) wrapImg(j, tmp1, j, tmp2);
     }
