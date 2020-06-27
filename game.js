@@ -5,12 +5,14 @@ var tmpX, tmpY;
 var target = null;
 var direction = 0;
 var canClick = 1;
-var a = new Audio('E:/Music/Simple love - obito (W-n Remix) , Cover Duongg , Tien.mp3');
+var a = new Audio('');
 var pieces;
 var n;	// number of rows
 var m;	// number of columns
+var start, end;
 const frameWidth = 960;
 const frameHeight = 540;
+var count;
 addEventListener("mouseup", function(event) {
 	if (canClick == 1) {
 		var target = event.target;
@@ -87,7 +89,7 @@ function play(target) {
 		canClick = 1;
 		n = 3;
 		m = 4;
-		createImage('picture/1-01.jpg');
+		createImage('picture/1-01.jpg', 1, 1);
 	}, 800);
 }
 addEventListener("mousedown", function (event) {
@@ -127,50 +129,111 @@ function move(event) {
 			for (var i = 0; i < target.length; i++) {
 				target[i].style.left = tmpX[i] + d + "px";
 			}
+			var tmp = d / (frameWidth / m);
+			if (tmp < 0) tmp = parseInt(-(-tmp + 2 / 3));
+			else tmp = parseInt(tmp + 2 / 3);
+			if (tmp != count) {
+				if (start + tmp >= 0 && end + tmp < m) {
+					swapCol(count, tmp, d);
+					count = tmp;
+                } 
+			}
+
 		}
 	}
 	else if (direction == 2) {
 		if (event.screenY != y) {
+			var d = event.screenY - y;
 			for (var i = 0; i < target.length; i++) {
-				var tmp = tmpY[i] + (event.screenY - y);
-				target[i].style.top = tmp + "px";
+				target[i].style.top = tmpY[i] + d + "px";
 			}
+			var tmp = d / (frameHeight / n);
+			if (tmp < 0) tmp = parseInt(-(-tmp + 2 / 3));
+			else tmp = parseInt(tmp + 2 / 3);
+			if (tmp != count) {
+				if (start + tmp >= 0 && end + tmp < n) {
+					swapRow(count, tmp, d);
+					count = tmp;
+                }
+            }
+		}
+	}
+	function swapRow(a, b, d) {
+		for (var i = start; i <= end; i++) moveRow(i + a, i + b);
+		if (b > a) {
+			for (var i = end + a + 1; i <= end + b; i++) moveRow(i, i - (end - start + 1));
+		}
+		else {
+			for (var i = start + a - 1; i >= start + b; i--) moveRow(i, i + (end - start + 1));
+        }
+		var tmp = target.length;
+		for (var i = 0; i < tmp; i++) {
+			tmpY[i] = -b * (frameHeight / n);
+			target[i].style.top = (tmpY[i] + d) + "px";
+        }
+	}
+	function swapCol(a, b, d) {
+		for (var i = start; i <= end; i++) moveCol(i + a, i + b);
+		if (b > a) {
+			for (var i = end + a + 1; i <= end + b; i++) moveCol(i, i - (end - start + 1));
+		}
+		else {
+			for (var i = start + a - 1; i >= start + b; i--) moveCol(i, i + (end - start + 1));
+        }
+		var tmp = target.length;
+		for (var i = 0; i < tmp; i++) {
+			tmpX[i] = -b * (frameWidth / m);
+			target[i].style.left = (tmpX[i] + d) + "px";
 		}
 	}
 }
+function moveRow(a, b) {
+	for (var i = 0; i < m; i++) moveImg(a, i, b, i);
+}
+function moveCol(a, b) {
+	for (var i = 0; i < n; i++) moveImg(i, a, i, b);
+}
 function selectTarget(_target) {
+	count = 0;
 	if (direction == 1) {
 		tmpX = new Array();
-		tmpY = new Array();
 		target = new Array();
 		var col = getCol(_target.parentElement);
 		selectCol(col);
-		checkCol(col, 1);
+		start = col;
+		end = col;
 		checkCol(col, -1);
+		checkCol(col, 1);
 	}
 	else if (direction == 2) {
 		tmpY = new Array();
 		target = new Array();
 		var row = getRow(_target.parentElement);
-		for (var i = 0; i < m; i++) {
-			target[i] = pieces[row][i].children[0];
-			frame.appendChild(pieces[row][i]);
-			target[i].style.transform = 'scale(1.01)';
-			tmpY[i] = 0;
-			checkRow(row, 1);
-			checkRow(row, -1);
-        }
+		selectRow(row);
+		start = row;
+		end = row;
+		checkRow(row, -1);
+		checkRow(row, 1);
 	}
 	function checkCol(tmp_col, r) {
 		if (tmp_col + r >= 0 && tmp_col + r < m) {
 			if (parseInt(pieces[0][tmp_col].children[0].getAttribute('y')) + r == parseInt(pieces[0][tmp_col + r].children[0].getAttribute('y'))) {
-				selectCol(tmp_col + r);
+				if (tmp_col + r > end) end = tmp_col + r;
+				else if (tmp_col + r < start) start = tmp_col + r;
 				checkCol(tmp_col + r, r);
+				selectCol(tmp_col + r);
 			}
 		}
 	}
-	function checkRow(tmp_col, r) {
-
+	function checkRow(tmp_row, r) {
+		if (tmp_row + r >= 0 && tmp_row + r < n) {
+			if (parseInt(pieces[tmp_row][0].children[0].getAttribute('x')) + r == parseInt(pieces[tmp_row + r][0].children[0].getAttribute('x'))) {
+				if (tmp_row + r > end) end = tmp_row + r;
+				else if (tmp_row + r < start) start = tmp_row + r;
+				checkRow(tmp_row + r, r);
+				selectRow(tmp_row + r);
+            }
+        }
 	}
 	function selectCol(tmp_col) {
 		for (var i = 0; i < n; i++) {
@@ -178,12 +241,18 @@ function selectTarget(_target) {
 			frame.appendChild(pieces[i][tmp_col]);
 			target[target.length - 1].style.transform = 'scale(1.01)';
 			tmpX[target.length - 1] = 0;
-			tmpY[target.lenght - 1] = 0;
 		}
 	}
-	function selectRow(tmp_col) {}
+	function selectRow(tmp_row) {
+		for (var i = 0; i < m; i++) {
+			target[target.length] = pieces[tmp_row][i].children[0];
+			frame.appendChild(pieces[tmp_row][i]);
+			target[target.length - 1].style.transform = 'scale(1.01)';
+			tmpY[target.length - 1] = 0;
+        }
+	}
 }
-function createImage(file) {
+function createImage(file, a, b) {
 	pieces = new Array();
 	for (var i = 0; i < n; i++) {
 		pieces[i] = new Array();
@@ -200,32 +269,37 @@ function createImage(file) {
 			tmp.style.background = 'url(' + file + ')';
 			tmp.style.backgroundPositionX = -(j * (frameWidth / m)) + "px";
 			tmp.style.backgroundPositionY = -(i * (frameHeight / n)) + 'px';
-			tmp.style.position = 'relative';
+			tmp.style.position = 'absolute';
 			tmp.setAttribute('x', i);
 			tmp.setAttribute('y', j);
 			pieces[i][j].appendChild(tmp);
 
 		}
 	}
-	mixImage(1, 1);
+	mixImage(a, b);
 }
 function mixImage(a, b) {
 	for (var i = 0; i < a; i++) {
 		var tmp1 = randomInt(n);
 		var tmp2 = randomInt(n);
 		while (tmp1 == tmp2) tmp2 = randomInt(n);
-		for (var j = 0; j < m; j++) wrapImg(tmp1, j, tmp2, j);
+		for (var j = 0; j < m; j++) {
+			moveImg(tmp1, j, tmp2, j);
+			moveImg(tmp2, j, tmp1, j);
+		}
 
 	}
 	for (var i = 0; i < b; i++) {
 		var tmp1 = randomInt(m);
 		var tmp2 = randomInt(m);
 		while (tmp1 == tmp2) tmp2 = randomInt(m);
-		for (var j = 0; j < n; j++) wrapImg(j, tmp1, j, tmp2);
-    }
+		for (var j = 0; j < n; j++) {
+			moveImg(j, tmp1, j, tmp2);
+			moveImg(j, tmp2, j, tmp1);
+		}
+	}
 }
-function wrapImg(n1, m1, n2, m2) {
-	pieces[n1][m1].appendChild(pieces[n2][m2].children[0]);
+function moveImg(n1, m1, n2, m2) {
 	pieces[n2][m2].appendChild(pieces[n1][m1].children[0]);
 }
 function getRow(node) {
