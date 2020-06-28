@@ -67,6 +67,7 @@ function _back() {
 		menu.removeChild(container_pre[n-1]);
 		menu.removeChild(header_pre[n-1]);
 		canClick = 1;
+		if (pieces != null) newFrame();
 	}, 800);
 }
 function start() {
@@ -306,6 +307,21 @@ function mixImage(a, b) {
 			moveImg(j, tmp2, j, tmp1);
 		}
 	}
+}
+function newFrame() {
+	var tmp1 = n;
+	var tmp2 = m;
+	while (tmp1) {
+		while (tmp2) {
+			frame.removeChild(pieces[tmp1 - 1][tmp2 - 1]);
+			tmp2--;
+		}
+		tmp1--;
+		tmp2 = m;
+	}
+	pieces = null;
+	n = 0;
+	m = 0;
 }
 function moveImg(n1, m1, n2, m2) {
 	pieces[n2][m2].appendChild(pieces[n1][m1].children[0]);
