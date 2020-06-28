@@ -170,7 +170,8 @@ function move(event) {
 		for (var i = 0; i < tmp; i++) {
 			tmpY[i] = -b * (frameHeight / n);
 			target[i].style.top = (tmpY[i] + d) + "px";
-        }
+		}
+		hightlight();
 	}
 	function swapCol(a, b, d) {
 		for (var i = start; i <= end; i++) moveCol(i + a, i + b);
@@ -185,7 +186,14 @@ function move(event) {
 			tmpX[i] = -b * (frameWidth / m);
 			target[i].style.left = (tmpX[i] + d) + "px";
 		}
+		hightlight();
 	}
+	function hightlight() {
+		var tmp = target.length;
+		for (var i = 0; i < tmp; i++) {
+			frame.appendChild(target[i].parentElement);
+        }
+    }
 }
 function moveRow(a, b) {
 	for (var i = 0; i < m; i++) moveImg(a, i, b, i);
