@@ -5,7 +5,8 @@ var tmpX, tmpY;
 var target = null;
 var direction = 0;
 var canClick = 1;
-var a = new Audio('');
+var sound = new Audio('sound/click.mp3');
+var mute = false;
 var pieces;
 var n;	// number of rows
 var m;	// number of columns
@@ -17,17 +18,25 @@ addEventListener("mouseup", function(event) {
 	if (canClick == 1) {
 		var target = event.target;
 		if (target.className == 'button') {
+			if (!mute) sound.play();
 			let lv = target.id;
 			canClick = 0;
 			select(lv);
 		}
 		else if (target.className == 'back') {
+			if (!mute) sound.play();
 			canClick = 0;
 			_back();
 		}
-		if (target.className == 'picture') {
+		else if (target.className == 'picture') {
+			if (!mute) sound.play();
 			canClick = 0;
 			play(target);
+		}
+		else if (target.className == "setting") {
+			if (!mute) sound.play();
+			canClick = 0;
+			select(-1);
         }
 	}
 })
@@ -37,8 +46,10 @@ addEventListener("mousedown", function (event) {
     }
 })
 function select(lv) {
-	var container_pre = document.getElementsByClassName("container")[0];
-	var header_pre = document.getElementsByClassName("header")[0];
+	var container_pre = document.getElementsByClassName("container");
+	var header_pre = document.getElementsByClassName("header");
+	container_pre = container_pre[container_pre.length - 1];
+	header_pre = header_pre[header_pre.length - 1];
 	menu.appendChild(container[lv]);
 	container[lv].style.animationName = 'enter';
 	header[lv].style.animationName = 'enter';
@@ -57,24 +68,23 @@ function _back() {
 	var n = container_pre.length;
 	container_pre[n-1].style.animationName = 'back';
 	header_pre[n-1].style.animationName = 'back';
-	container[n-2].style.display = 'block';
-	header[n-2].style.display = 'block';
-	//menu.appendChild(container[0]);
-	//menu.appendChild(header[0]);
+	container_pre[n-2].style.display = 'block';
+	header_pre[n-2].style.display = 'block';
 	container_pre[n-2].style.animationName = 'unhide';
-	header[n-2].style.animationName = 'unhide';
+	header_pre[n-2].style.animationName = 'unhide';
 	setTimeout(function() {
 		menu.removeChild(container_pre[n-1]);
 		menu.removeChild(header_pre[n-1]);
 		canClick = 1;
-		if (pieces != null) newFrame();
 	}, 800);
 }
+
 function start() {
 	menu.appendChild(container[0]);
 	menu.appendChild(header[0]);
 }
 function play(target) {
+	if (pieces != null) newFrame();
 	var container_pre = document.getElementsByClassName("container")[1];
 	var header_pre = document.getElementsByClassName("header")[1];
 	container_pre.style.animationName = 'hide';
@@ -334,4 +344,16 @@ function getCol(node) {
 }
 function randomInt(a) {
 	return Math.floor(Math.random() * a);
+}
+sound_button.onclick = function (event) {
+	console.log(event.target);
+	mute = !mute;
+	if (mute) {
+		event.target.parentElement.style.background = 'grey';
+		event.target.style.left = "0px";
+	}
+	else {
+		event.target.parentElement.style.background = '#FF7424';
+		event.target.style.left = "34px";
+	}
 }

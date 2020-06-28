@@ -155,3 +155,45 @@ play_header.appendChild(play_back);
 var frame = document.createElement("div");
 frame.id = 'frame';
 play_container.appendChild(frame);
+
+
+//setting
+container[-1]= document.createElement("div");
+container[-1].className = "container";
+header[-1] = document.createElement("div");
+header[-1].className = 'header';
+header[-1].style.background = '#FF7424';
+header[-1].style.animationName = 'enter';
+setting_title = document.createElement("span");
+setting_title.className = "title";
+setting_title.innerText = "Setting";
+back[-1] = document.createElement("div");
+back[-1].className = "back";
+header[-1].appendChild(back[-1]);
+header[-1].appendChild(setting_title);
+
+var soundBT = document.createElement("div");
+soundBT.style.top = "30%";
+soundBT.style.margin = "1% auto 0 auto";
+soundBT.style.width = '40%';
+soundBT.style.minWidth = '200px';
+soundBT.style.maxWidth = '1000px';
+soundBT.style.height = '28px';
+soundBT.style.position = 'relative';
+soundBT.style.borderTop = '1px solid grey';
+soundBT.style.borderBottom = '1px solid grey';
+var sound_icon = document.createElement("div");
+sound_icon.className = 'sound';
+var sound_frame = document.createElement("div");
+sound_frame.id = "frame-check-button";
+var sound_button = document.createElement("div");
+sound_button.id = "check-button";
+sound_frame.appendChild(sound_button);
+var sound_text = document.createElement("span");
+sound_text.className = "text";
+sound_text.innerText = "Sound";
+sound_text.style.marginRight = '100px';
+soundBT.appendChild(sound_text);
+soundBT.appendChild(sound_frame);
+soundBT.appendChild(sound_icon);
+container[-1].appendChild(soundBT);
