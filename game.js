@@ -3,6 +3,7 @@ var menu = document.getElementById('menu');
 var footer = document.getElementById('footer');
 var nextButton = document.getElementById('next-button');
 var nextText = document.getElementById('next-text');
+var congrat = document.getElementById('congrat');
 var x, y;
 var tmpX, tmpY;
 var target = null;
@@ -20,6 +21,8 @@ var temp;
 var count;
 var rightCol;
 var rightRow;
+var index;
+loadPic();
 addEventListener("mouseup", function(event) {
 	if (canClick == 1) {
 		var target = event.target;
@@ -78,14 +81,14 @@ function _back() {
 	var n = container_pre.length;
 	if (n == 3) footer.style.bottom = '-60px';
 	container_pre[n-1].style.animationName = 'back';
-	header_pre[n-1].style.animationName = 'back';
+	header_pre[n].style.animationName = 'back';
 	container_pre[n-2].style.display = 'block';
-	header_pre[n-2].style.display = 'block';
+	header_pre[n].style.display = 'block';
 	container_pre[n-2].style.animationName = 'unhide';
-	header_pre[n-2].style.animationName = 'unhide';
+	header_pre[n-1].style.animationName = 'unhide';
 	setTimeout(function() {
 		menu.removeChild(container_pre[n-1]);
-		menu.removeChild(header_pre[n-1]);
+		menu.removeChild(header_pre[n]);
 		canClick = 1;
 	}, 800);
 }
@@ -97,11 +100,9 @@ function start() {
 
 //Khi chon man choi - Bat dau choi
 function play(target) {
-	rightCol = false;
-	rightRow = false;
-	footer.style.bottom = '-60px';
-	play_title.innerText = "";
-	if (pieces != null) newFrame();
+	index = target.getAttribute('index');
+	newGame();
+	var data = game[index];
 	var container_pre = document.getElementsByClassName("container")[1];
 	var header_pre = document.getElementsByClassName("header")[1];
 	container_pre.style.animationName = 'hide';
@@ -110,20 +111,10 @@ function play(target) {
 	menu.appendChild(play_header);
 	play_container.style.animationName = 'enter';
 	play_header.style.animationName = 'enter';
-	play_header.style.background = target.getAttribute('headerColor');
-	footer.style.background = target.getAttribute('headerColor');
-	nextText.style.color = target.getAttribute('headerColor');
-	nextButton.style.background = target.getAttribute('background');
-	play_container.style.background = target.getAttribute('background');
-	game_over.style.display = 'none';
-	restart_button.style.display = 'none';
 	setTimeout(function () {
 		container_pre.style.display = 'none';
 		header_pre.style.display = 'none';
 		canClick = 1;
-		n = 3;
-		m = 4;
-		createImage('picture/1-01.jpg', 1, 1, 7);
 	}, 800);
 }
 
@@ -150,11 +141,18 @@ addEventListener("mouseup", function () {
 			play_title.innerText = "Moves:" + count;
 			if (direction == 1) {
 				rightCol = true;
-				for (var i = 0; i < m; i++) if (pieces[0][i].children[0].getAttribute('y') != i) rightCol = false;
+				for (var i = 0; i < m; i++) if (pieces[0][i].children[0].getAttribute('y') != i) {
+					rightCol = false;
+					console.log('col', pieces[0][i].children[0].getAttribute('y'), i);
+				}
+
 			}
 			else if (direction == 2) {
 				rightRow = true;
-				for (var i = 0; i < n; i++) if (pieces[i][0].children[0].getAttribute('x') != i) rightRow = false;
+				for (var i = 0; i < n; i++) if (pieces[i][0].children[0].getAttribute('x') != i) {
+					rightRow = false;
+					console.log('row', pieces[i][0].children[0].getAttribute('x'), i);
+				}
 			}
 			if (rightRow && rightCol) win();
 			else if (count == 0) gameOver();
@@ -164,6 +162,18 @@ addEventListener("mouseup", function () {
 	target = null;
 	direction = 0;
 })
+
+function loadPic() {
+	for (var i = 0; i < game.length; i++) {
+		var pic = document.createElement("div");
+		pic.className = 'picture';
+		pic.style.background = "url('" + game[i]['path'] + "')";
+		pic.style.backgroundSize = 'cover';
+		pic.id = game[i]['id'];
+		pic.setAttribute('index', i);
+		container[(game[i]['id']).slice(0, 1)].appendChild(pic);
+	}
+}
 
 //Di chuyen manh ghep
 function move(event) {
@@ -317,10 +327,8 @@ function selectTarget(_target) {
         }
 	}
 }
-function createImage(path, a, b, _count) {
+function createImage(path, a, b) {
 	pieces = new Array();
-	count = _count;
-	play_title.innerText = "Moves:" + count;
 	for (var i = 0; i < n; i++) {
 		pieces[i] = new Array();
 		for (var j = 0; j < m; j++) {
@@ -416,12 +424,52 @@ restart_button.onclick = function () {
 function restart() {
 	newFrame();
 	pieces = null;
-	createImage('picture/1-01.jpg', 1, 1, 7);
+	var data = game[index];
+	count = data['moves'];
+	play_title.innerText = "Moves:" + count;
+	createImage(data['path'], data['swaprow'], data['swapcol']);
 }
 function win() {
-	play_title.innerText = 'Congratulations!';
+	congrat.style.top = '0';
 	footer.style.bottom = '0';
 };
 nextButton.onclick = function () {
-
+	index++;
+	canClick = 0;
+	console.log(index + 1, game.length);
+	if (index < game.length) nextLV();
+}
+function newGame() {
+	var data = game[index];
+	count = data['moves'];
+	console.log(play_title, count);
+	play_title.innerText = "Moves:" + count;
+	console.log(play_title.innerText);
+	rightCol = false;
+	rightRow = false;
+	footer.style.bottom = '-60px';
+	congrat.style.top = '-60px';
+	if (pieces != null) newFrame();
+	play_header.style.background = data['headerColor'];
+	setTimeout(function () {
+		congrat.style.background = data['headerColor'];
+		footer.style.background = data['headerColor'];
+		nextText.style.color = data['headerColor'];
+	}, 800);
+	nextButton.style.background = data['background'];
+	play_container.style.background = data['background'];
+	game_over.style.display = 'none';
+	restart_button.style.display = 'none';
+	n = data['rows'];
+	m = data['cols'];
+	setTimeout(function () {
+		canClick = 1;
+		createImage(data['path'], data['swaprow'], data['swapcol']);
+	}, 1000);
+}
+function nextLV() {
+	congrat.style.top = '-60px';
+	footer.style.bottom = '-60px';
+	newFrame();
+	setTimeout(newGame, 600);
 }

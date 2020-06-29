@@ -127,14 +127,6 @@ title[5].innerText = 'Portraits';
 title[5].className = 'title';
 header[5].appendChild(title[5]);
 
-var pic = document.createElement("div");
-pic.className = 'picture';
-container[1].appendChild(pic);
-pic.style.background = 'url("picture/1-01.jpg")';
-pic.id = '1-01';
-pic.style.backgroundSize = 'cover';
-pic.setAttribute("background", '#FFF4C3');
-pic.setAttribute("headerColor", 'pink');
 
 //play
 var play_container = document.createElement("div");

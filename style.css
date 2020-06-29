@@ -35,7 +35,7 @@ div.header {
 	left: 0px;
 	transition: 0.8s;
 	box-shadow: 0 0 5px 2px dimgrey;
-	z-index: 9998;
+	z-index: 9997;
 	position: fixed;
 }
 span.title {
