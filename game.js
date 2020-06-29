@@ -15,6 +15,8 @@ const frameWidth = 960;
 const frameHeight = 540;
 var temp;
 var count;
+var rightCol;
+var rightRow;
 addEventListener("mouseup", function(event) {
 	if (canClick == 1) {
 		var target = event.target;
@@ -41,6 +43,8 @@ addEventListener("mouseup", function(event) {
         }
 	}
 })
+
+//Khi bam vao 1 nut
 function select(lv) {
 	var container_pre = document.getElementsByClassName("container");
 	var header_pre = document.getElementsByClassName("header");
@@ -58,6 +62,8 @@ function select(lv) {
 		canClick = 1;
 	}, 800);
 }
+
+//Khi bam nut quay lai
 function _back() {
 	var container_pre = document.getElementsByClassName("container");
 	var header_pre = document.getElementsByClassName("header");
@@ -79,7 +85,11 @@ function start() {
 	menu.appendChild(container[0]);
 	menu.appendChild(header[0]);
 }
+
+//Khi chon man choi - Bat dau choi
 function play(target) {
+	rightCol = false;
+	rightRow = false;
 	if (pieces != null) newFrame();
 	var container_pre = document.getElementsByClassName("container")[1];
 	var header_pre = document.getElementsByClassName("header")[1];
@@ -100,6 +110,8 @@ function play(target) {
 		createImage('picture/1-01.jpg', 1, 1, 7);
 	}, 800);
 }
+
+//Luu vi tri con tro chuot khi bam chuot vao manh ghep
 addEventListener("mousedown", function (event) {
 	if (event.target.className == 'piece') {
 		addEventListener("mousemove", move);
@@ -107,6 +119,8 @@ addEventListener("mousedown", function (event) {
 		y = event.screenY;
 	}
 })
+
+//Tha manh ghep
 addEventListener("mouseup", function () {
 	if (target != null) {
 		for (var i = 0; target[i] != null; i++) {
@@ -117,25 +131,39 @@ addEventListener("mouseup", function () {
 		}
 		if (temp) {
 			count--;
-			play_title.innerText = "Moves:" + count; 
-			if (count == 0) {
-				gameOver();
-            }
+			play_title.innerText = "Moves:" + count;
+			if (direction == 1) {
+				rightCol = true;
+				for (var i = 0; i < m; i++) if (pieces[0][i].children[0].getAttribute('y') != i) rightCol = false;
+			}
+			else if (direction == 2) {
+				rightRow = true;
+				for (var i = 0; i < n; i++) if (pieces[i][0].children[0].getAttribute('x') != i) rightRow = false;
+			}
+			console.log(rightCol, rightRow);
+			if (rightRow && rightCol) win();
+			else if (count == 0) gameOver();
 		}
 	}
 	removeEventListener("mousemove", move);
 	target = null;
 	direction = 0;
 })
+
+//Di chuyen manh ghep
 function move(event) {
 	if (target == null && direction == 0) {
 		if (event.screenX != x) {
-			direction = 1;
-			selectTarget(event.target);
+			if (!rightCol) {
+				direction = 1;
+				selectTarget(event.target);
+			}
 		}
-		else {
-			direction = 2;
-			selectTarget(event.target);
+		else if ( event.screenY) {
+			if (!rightRow) {
+				direction = 2;
+				selectTarget(event.target);
+			}
 		}
 	}
 	if (direction == 1) {
@@ -374,3 +402,4 @@ function restart() {
 	pieces = null;
 	createImage('picture/1-01.jpg', 1, 1, 7);
 }
+function win() { };

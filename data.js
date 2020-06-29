@@ -11,7 +11,7 @@ header[0].className = 'header';
 header[0].style.background = '#FF7424';
 var setting = document.createElement("div");
 setting.className = 'setting';
-title[0] = document.createElement("div");
+title[0] = document.createElement("span");
 title[0].innerText = 'Slide the Pic';
 title[0].className = 'title';
 header[0].appendChild(title[0]);
