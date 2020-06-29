@@ -8,11 +8,12 @@ var canClick = 1;
 var sound = new Audio('sound/click.mp3');
 var mute = false;
 var pieces;
-var n;	// number of rows
-var m;	// number of columns
+var n;	// So dong
+var m;	// So cot
 var start, end;
 const frameWidth = 960;
 const frameHeight = 540;
+var temp;
 var count;
 addEventListener("mouseup", function(event) {
 	if (canClick == 1) {
@@ -39,11 +40,6 @@ addEventListener("mouseup", function(event) {
 			select(-1);
         }
 	}
-})
-addEventListener("mousedown", function (event) {
-	if (event.target.classname == 'piece') {
-		
-    }
 })
 function select(lv) {
 	var container_pre = document.getElementsByClassName("container");
@@ -93,14 +89,15 @@ function play(target) {
 	menu.appendChild(play_header);
 	play_container.style.animationName = 'enter';
 	play_header.style.animationName = 'enter';
-	pieces = null;
+	game_over.style.display = 'none';
+	restart_button.style.display = 'none';
 	setTimeout(function () {
 		container_pre.style.display = 'none';
 		header_pre.style.display = 'none';
 		canClick = 1;
 		n = 3;
 		m = 4;
-		createImage('picture/1-01.jpg', 1, 1);
+		createImage('picture/1-01.jpg', 1, 1, 7);
 	}, 800);
 }
 addEventListener("mousedown", function (event) {
@@ -110,14 +107,21 @@ addEventListener("mousedown", function (event) {
 		y = event.screenY;
 	}
 })
-addEventListener("mouseup", function (t) {
+addEventListener("mouseup", function () {
 	if (target != null) {
 		for (var i = 0; target[i] != null; i++) {
 			target[i].style.transform = 'scale(1)';
 			target[i].style.left = '0px';
 			target[i].style.top = '0px';
 			target[i] = null;
-        }
+		}
+		if (temp) {
+			count--;
+			play_title.innerText = "Moves:" + count; 
+			if (count == 0) {
+				gameOver();
+            }
+		}
 	}
 	removeEventListener("mousemove", move);
 	target = null;
@@ -143,13 +147,12 @@ function move(event) {
 			var tmp = d / (frameWidth / m);
 			if (tmp < 0) tmp = parseInt(-(-tmp + 2 / 3));
 			else tmp = parseInt(tmp + 2 / 3);
-			if (tmp != count) {
+			if (tmp != temp) {
 				if (start + tmp >= 0 && end + tmp < m) {
-					swapCol(count, tmp, d);
-					count = tmp;
+					swapCol(temp, tmp, d);
+					temp = tmp;
                 } 
 			}
-
 		}
 	}
 	else if (direction == 2) {
@@ -161,10 +164,10 @@ function move(event) {
 			var tmp = d / (frameHeight / n);
 			if (tmp < 0) tmp = parseInt(-(-tmp + 2 / 3));
 			else tmp = parseInt(tmp + 2 / 3);
-			if (tmp != count) {
+			if (tmp != temp) {
 				if (start + tmp >= 0 && end + tmp < n) {
-					swapRow(count, tmp, d);
-					count = tmp;
+					swapRow(temp, tmp, d);
+					temp = tmp;
                 }
             }
 		}
@@ -213,7 +216,7 @@ function moveCol(a, b) {
 	for (var i = 0; i < n; i++) moveImg(i, a, i, b);
 }
 function selectTarget(_target) {
-	count = 0;
+	temp = 0;
 	if (direction == 1) {
 		tmpX = new Array();
 		target = new Array();
@@ -271,8 +274,10 @@ function selectTarget(_target) {
         }
 	}
 }
-function createImage(file, a, b) {
+function createImage(path, a, b, _count) {
 	pieces = new Array();
+	count = _count;
+	play_title.innerText = "Moves:" + count;
 	for (var i = 0; i < n; i++) {
 		pieces[i] = new Array();
 		for (var j = 0; j < m; j++) {
@@ -285,14 +290,13 @@ function createImage(file, a, b) {
 			tmp.className = 'piece';
 			tmp.style.width = 960 / m + "px";
 			tmp.style.height = 540 / n + "px";
-			tmp.style.background = 'url(' + file + ')';
+			tmp.style.background = 'url(' + path + ')';
 			tmp.style.backgroundPositionX = -(j * (frameWidth / m)) + "px";
 			tmp.style.backgroundPositionY = -(i * (frameHeight / n)) + 'px';
 			tmp.style.position = 'absolute';
 			tmp.setAttribute('x', i);
 			tmp.setAttribute('y', j);
 			pieces[i][j].appendChild(tmp);
-
 		}
 	}
 	mixImage(a, b);
@@ -330,8 +334,6 @@ function newFrame() {
 		tmp2 = m;
 	}
 	pieces = null;
-	n = 0;
-	m = 0;
 }
 function moveImg(n1, m1, n2, m2) {
 	pieces[n2][m2].appendChild(pieces[n1][m1].children[0]);
@@ -356,4 +358,19 @@ sound_button.onclick = function (event) {
 		event.target.parentElement.style.background = '#FF7424';
 		event.target.style.left = "34px";
 	}
+}
+
+function gameOver() {
+	game_over.style.display = 'block';
+	restart_button.style.display = 'block';
+}
+restart_button.onclick = function () {
+	game_over.style.display = 'none';
+	restart_button.style.display = 'none';
+	restart();
+};
+function restart() {
+	newFrame();
+	pieces = null;
+	createImage('picture/1-01.jpg', 1, 1, 7);
 }

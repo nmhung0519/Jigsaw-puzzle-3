@@ -124,6 +124,28 @@ span.text {
 	left: 30px;
 	position: absolute;
 }
+#game-over {
+	left: 0;
+	width: 100%;
+	top: 0;
+	height: 100%;
+	z-index: 9999;
+	opacity: 0.5;
+	background: grey;
+	display: none;
+	position: absolute;
+}
+#restart-button {
+	width: 200px;
+	height: 100px;
+	top: -50%;
+	background: blue;
+	margin: 1% auto 0 auto;
+	cursor: pointer;
+	display: none;
+	z-index: 10000;
+	position: relative;
+}
 @keyframes enter {
 	from {left: 100%;}
 	to {left: 0%;}

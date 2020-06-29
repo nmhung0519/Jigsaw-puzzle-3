@@ -137,6 +137,7 @@ var pic2 = document.createElement("div");
 pic2.className = 'picture';
 container[1].appendChild(pic2);
 
+//play
 var play_container = document.createElement("div");
 play_container.className = "container";
 var play_header = document.createElement("div");
@@ -155,6 +156,13 @@ play_header.appendChild(play_back);
 var frame = document.createElement("div");
 frame.id = 'frame';
 play_container.appendChild(frame);
+//game over
+var game_over = document.createElement("div");
+game_over.id = "game-over";
+var restart_button = document.createElement("div");
+restart_button.id = 'restart-button';
+play_container.appendChild(game_over);
+play_container.appendChild(restart_button);
 
 
 //setting
@@ -166,12 +174,13 @@ header[-1].style.background = '#FF7424';
 header[-1].style.animationName = 'enter';
 setting_title = document.createElement("span");
 setting_title.className = "title";
-setting_title.innerText = "Setting";
+setting_title.innerText = "Settings";
 back[-1] = document.createElement("div");
 back[-1].className = "back";
 header[-1].appendChild(back[-1]);
 header[-1].appendChild(setting_title);
 
+//Sound setting button
 var soundBT = document.createElement("div");
 soundBT.style.top = "30%";
 soundBT.style.margin = "1% auto 0 auto";
