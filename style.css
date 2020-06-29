@@ -52,7 +52,6 @@ div.button {
 	min-height: 50px;
 	margin: 1% auto 0 auto;
 	top: 10%;
-	background: green;
 	border-radius: 10px;
 	transition: 0.8s;
 	cursor: pointer;
@@ -94,12 +93,14 @@ div.sound {
 	background-size: cover;
 	position: absolute;
 }
-div.picture {
-	width: 100px;
-	height: 100px;
+li.picture {
+	width: 120px;
+	height: 120px;
 	outline: 5px solid white;
-	margin: 0 auto -110px auto;
+	margin: 20px 20px 20px 20px;
 	top: 12%;
+	left: 20px;
+	float: left;
 	cursor: pointer;
 	box-shadow: 0 0 5px 4px dimgrey;
 	position: relative;

@@ -4,6 +4,10 @@ var footer = document.getElementById('footer');
 var nextButton = document.getElementById('next-button');
 var nextText = document.getElementById('next-text');
 var congrat = document.getElementById('congrat');
+var container = [];
+var header = [];
+var title = [];
+var back = [];
 var x, y;
 var tmpX, tmpY;
 var target = null;
@@ -22,7 +26,89 @@ var count;
 var rightCol;
 var rightRow;
 var index;
+
+container[0] = createContainer();
+header[0] = createHeader();
+header[0].style.background = button[0]['headerColor'];
+header[0].appendChild(createTitle(button[0]['name']));
+var setting = document.createElement("div");
+setting.className = 'setting';
+header[0].appendChild(setting);
+for (var i = 1; i < button.length; i++) {
+	container[0].appendChild(createButton(i, button[i]));
+	createPage(i, button[i]['name']);
+}
 loadPic();
+container[-1] = createContainer();
+header[-1] = createHeader();
+header[-1].appendChild(createBack());
+
+//play
+var play_container = createContainer();
+var play_header = createHeader();
+var play_title = createTitle();
+var play_setting = document.createElement("div");
+play_setting.className = 'setting';
+play_setting.style.right = "2%";
+play_setting.style.left = "auto";
+play_header.style.background = 'pink';
+play_header.appendChild(play_title);
+play_header.appendChild(play_setting);
+play_header.appendChild(createBack());
+var frame = document.createElement("div");
+frame.id = 'frame';
+play_container.appendChild(frame);
+//game over
+var game_over = document.createElement("div");
+game_over.id = "game-over";
+var restart_button = document.createElement("div");
+restart_button.id = 'restart-button';
+play_container.appendChild(game_over);
+play_container.appendChild(restart_button);
+restart_button.onclick = function () {
+	game_over.style.display = 'none';
+	restart_button.style.display = 'none';
+	restart();
+};
+
+//Sound setting button
+var soundBT = document.createElement("div");
+soundBT.style.top = "30%";
+soundBT.style.margin = "1% auto 0 auto";
+soundBT.style.width = '40%';
+soundBT.style.minWidth = '200px';
+soundBT.style.maxWidth = '1000px';
+soundBT.style.height = '28px';
+soundBT.style.position = 'relative';
+soundBT.style.borderTop = '1px solid grey';
+soundBT.style.borderBottom = '1px solid grey';
+soundBT.style.background = 'white';
+var sound_icon = document.createElement("div");
+sound_icon.className = 'sound';
+var sound_frame = document.createElement("div");
+sound_frame.id = "frame-check-button";
+var sound_button = document.createElement("div");
+sound_button.id = "check-button";
+sound_frame.appendChild(sound_button);
+var sound_text = document.createElement("span");
+sound_text.className = "text";
+sound_text.innerText = "Sound";
+sound_text.style.marginRight = '100px';
+soundBT.appendChild(sound_text);
+soundBT.appendChild(sound_frame);
+soundBT.appendChild(sound_icon);
+sound_button.onclick = function (event) {
+	mute = !mute;
+	if (mute) {
+		event.target.parentElement.style.background = 'grey';
+		event.target.style.left = "0px";
+	}
+	else {
+		event.target.parentElement.style.background = header[-1].style.background;
+		event.target.style.left = "34px";
+	}
+}
+container[-1].appendChild(soundBT);
 addEventListener("mouseup", function(event) {
 	if (canClick == 1) {
 		var target = event.target;
@@ -83,7 +169,7 @@ function _back() {
 	container_pre[n-1].style.animationName = 'back';
 	header_pre[n].style.animationName = 'back';
 	container_pre[n-2].style.display = 'block';
-	header_pre[n].style.display = 'block';
+	header_pre[n-1].style.display = 'block';
 	container_pre[n-2].style.animationName = 'unhide';
 	header_pre[n-1].style.animationName = 'unhide';
 	setTimeout(function() {
@@ -104,7 +190,7 @@ function play(target) {
 	newGame();
 	var data = game[index];
 	var container_pre = document.getElementsByClassName("container")[1];
-	var header_pre = document.getElementsByClassName("header")[1];
+	var header_pre = document.getElementsByClassName("header")[2];
 	container_pre.style.animationName = 'hide';
 	header_pre.style.animationName = 'hide';
 	menu.appendChild(play_container);
@@ -141,18 +227,12 @@ addEventListener("mouseup", function () {
 			play_title.innerText = "Moves:" + count;
 			if (direction == 1) {
 				rightCol = true;
-				for (var i = 0; i < m; i++) if (pieces[0][i].children[0].getAttribute('y') != i) {
-					rightCol = false;
-					console.log('col', pieces[0][i].children[0].getAttribute('y'), i);
-				}
+				for (var i = 0; i < m; i++) if (pieces[0][i].children[0].getAttribute('y') != i) rightCol = false;
 
 			}
 			else if (direction == 2) {
 				rightRow = true;
-				for (var i = 0; i < n; i++) if (pieces[i][0].children[0].getAttribute('x') != i) {
-					rightRow = false;
-					console.log('row', pieces[i][0].children[0].getAttribute('x'), i);
-				}
+				for (var i = 0; i < n; i++) if (pieces[i][0].children[0].getAttribute('x') != i) rightRow = false;
 			}
 			if (rightRow && rightCol) win();
 			else if (count == 0) gameOver();
@@ -165,10 +245,10 @@ addEventListener("mouseup", function () {
 
 function loadPic() {
 	for (var i = 0; i < game.length; i++) {
-		var pic = document.createElement("div");
+		var pic = document.createElement("li");
 		pic.className = 'picture';
 		pic.style.background = "url('" + game[i]['path'] + "')";
-		pic.style.backgroundSize = 'cover';
+		pic.style.backgroundSize = '100% 100%';
 		pic.id = game[i]['id'];
 		pic.setAttribute('index', i);
 		container[(game[i]['id']).slice(0, 1)].appendChild(pic);
@@ -400,27 +480,12 @@ function getCol(node) {
 function randomInt(a) {
 	return Math.floor(Math.random() * a);
 }
-sound_button.onclick = function (event) {
-	mute = !mute;
-	if (mute) {
-		event.target.parentElement.style.background = 'grey';
-		event.target.style.left = "0px";
-	}
-	else {
-		event.target.parentElement.style.background = header[-1].style.background;
-		event.target.style.left = "34px";
-	}
-}
 
 function gameOver() {
 	game_over.style.display = 'block';
 	restart_button.style.display = 'block';
 }
-restart_button.onclick = function () {
-	game_over.style.display = 'none';
-	restart_button.style.display = 'none';
-	restart();
-};
+
 function restart() {
 	newFrame();
 	pieces = null;
@@ -472,4 +537,48 @@ function nextLV() {
 	footer.style.bottom = '-60px';
 	newFrame();
 	setTimeout(newGame, 600);
+}
+
+//Tao page
+function createPage(i, name) {
+	container[i] = createContainer();
+	container[i].style.background = "FFF4C3";
+	header[i] = createHeader();
+	header[i].style.background = 'blue';
+	header[i].appendChild(createBack());
+	header[i].style.background = 'blue';
+	header[i].appendChild(createTitle(name));
+
+}
+function createContainer() {
+	var tmp = document.createElement("div");
+	tmp.className = 'container';
+	return tmp;
+}
+function createHeader() {
+	var tmp = document.createElement("div");
+	tmp.className = 'header';
+	return tmp;
+}
+function createBack() {
+	var tmp = document.createElement("div");
+	tmp.className = 'back';
+	return tmp;
+}
+function createTitle(name) {
+	var tmp = document.createElement("span");
+	tmp.className = 'title';
+	tmp.innerText = name;
+	return tmp;
+}
+
+//Tao button chon bo suu tap anh
+function createButton(i, data) {
+	var but = document.createElement("div");
+	but.id = i;
+	but.className = 'button';
+	but.innerText = data['name'];
+	but.style.background = data['butBackground'];
+	console.log(but);
+	return but;
 }
