@@ -1,5 +1,8 @@
 var buttons = document.getElementsByClassName('button');
 var menu = document.getElementById('menu');
+var footer = document.getElementById('footer');
+var nextButton = document.getElementById('next-button');
+var nextText = document.getElementById('next-text');
 var x, y;
 var tmpX, tmpY;
 var target = null;
@@ -48,6 +51,11 @@ addEventListener("mouseup", function(event) {
 function select(lv) {
 	var container_pre = document.getElementsByClassName("container");
 	var header_pre = document.getElementsByClassName("header");
+	if (lv == -1) {
+		container[-1].style.background = container_pre[container_pre.length - 1].style.background;
+		header[-1].style.background = header_pre[header_pre.length - 1].style.background;
+		if (!mute) sound_frame.style.background = header[-1].style.background;
+    }
 	container_pre = container_pre[container_pre.length - 1];
 	header_pre = header_pre[header_pre.length - 1];
 	menu.appendChild(container[lv]);
@@ -68,6 +76,7 @@ function _back() {
 	var container_pre = document.getElementsByClassName("container");
 	var header_pre = document.getElementsByClassName("header");
 	var n = container_pre.length;
+	if (n == 3) footer.style.bottom = '-60px';
 	container_pre[n-1].style.animationName = 'back';
 	header_pre[n-1].style.animationName = 'back';
 	container_pre[n-2].style.display = 'block';
@@ -90,6 +99,8 @@ function start() {
 function play(target) {
 	rightCol = false;
 	rightRow = false;
+	footer.style.bottom = '-60px';
+	play_title.innerText = "";
 	if (pieces != null) newFrame();
 	var container_pre = document.getElementsByClassName("container")[1];
 	var header_pre = document.getElementsByClassName("header")[1];
@@ -99,6 +110,11 @@ function play(target) {
 	menu.appendChild(play_header);
 	play_container.style.animationName = 'enter';
 	play_header.style.animationName = 'enter';
+	play_header.style.background = target.getAttribute('headerColor');
+	footer.style.background = target.getAttribute('headerColor');
+	nextText.style.color = target.getAttribute('headerColor');
+	nextButton.style.background = target.getAttribute('background');
+	play_container.style.background = target.getAttribute('background');
 	game_over.style.display = 'none';
 	restart_button.style.display = 'none';
 	setTimeout(function () {
@@ -140,7 +156,6 @@ addEventListener("mouseup", function () {
 				rightRow = true;
 				for (var i = 0; i < n; i++) if (pieces[i][0].children[0].getAttribute('x') != i) rightRow = false;
 			}
-			console.log(rightCol, rightRow);
 			if (rightRow && rightCol) win();
 			else if (count == 0) gameOver();
 		}
@@ -328,6 +343,7 @@ function createImage(path, a, b, _count) {
 		}
 	}
 	mixImage(a, b);
+	frame.style.boxShadow = '0 0 5px 4px dimgrey';
 }
 function mixImage(a, b) {
 	for (var i = 0; i < a; i++) {
@@ -362,6 +378,7 @@ function newFrame() {
 		tmp2 = m;
 	}
 	pieces = null;
+	frame.style.boxShadow = '';
 }
 function moveImg(n1, m1, n2, m2) {
 	pieces[n2][m2].appendChild(pieces[n1][m1].children[0]);
@@ -376,14 +393,13 @@ function randomInt(a) {
 	return Math.floor(Math.random() * a);
 }
 sound_button.onclick = function (event) {
-	console.log(event.target);
 	mute = !mute;
 	if (mute) {
 		event.target.parentElement.style.background = 'grey';
 		event.target.style.left = "0px";
 	}
 	else {
-		event.target.parentElement.style.background = '#FF7424';
+		event.target.parentElement.style.background = header[-1].style.background;
 		event.target.style.left = "34px";
 	}
 }
@@ -402,4 +418,10 @@ function restart() {
 	pieces = null;
 	createImage('picture/1-01.jpg', 1, 1, 7);
 }
-function win() { };
+function win() {
+	play_title.innerText = 'Congratulations!';
+	footer.style.bottom = '0';
+};
+nextButton.onclick = function () {
+
+}
