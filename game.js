@@ -48,6 +48,10 @@ var play_container = createContainer();
 var play_header = createHeader();
 var play_title = createTitle();
 var play_setting = document.createElement("div");
+var refresh = document.createElement("div");
+refresh.id = 'refresh';
+refresh.onclick = function () { restart(); };
+play_header.appendChild(refresh);
 play_setting.className = 'setting';
 play_setting.style.right = "2%";
 play_setting.style.left = "auto";
@@ -62,10 +66,18 @@ play_container.appendChild(frame);
 var game_over = document.createElement("div");
 game_over.id = "game-over";
 var restart_button = document.createElement("div");
+var restart_title = document.createElement("span");
+restart_title.id = 'restart-title';
+restart_title.innerText = 'Out of moves';
+restart_button.appendChild(restart_title);
+var restart_click = document.createElement("span");
+restart_click.id = 'restart-click';
+restart_click.innerText = 'Restart Level';
+restart_button.appendChild(restart_click);
 restart_button.id = 'restart-button';
 play_container.appendChild(game_over);
 play_container.appendChild(restart_button);
-restart_button.onclick = function () {
+restart_click.onclick = function () {
 	game_over.style.display = 'none';
 	restart_button.style.display = 'none';
 	restart();
@@ -186,7 +198,7 @@ function start() {
 
 //Khi chon man choi - Bat dau choi
 function play(target) {
-	index = target.getAttribute('index');
+	index = parseInt(target.getAttribute('index'));
 	newGame();
 	var data = game[index];
 	var container_pre = document.getElementsByClassName("container")[1];
@@ -499,10 +511,9 @@ function win() {
 	footer.style.bottom = '0';
 };
 nextButton.onclick = function () {
-	index++;
 	canClick = 0;
 	console.log(index + 1, game.length);
-	if (index < game.length) nextLV();
+	if (index +1 < game.length) nextLV();
 }
 function newGame() {
 	var data = game[index];
@@ -533,6 +544,7 @@ function newGame() {
 	}, 1000);
 }
 function nextLV() {
+	index++;
 	congrat.style.top = '-60px';
 	footer.style.bottom = '-60px';
 	newFrame();

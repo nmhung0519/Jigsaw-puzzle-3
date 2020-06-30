@@ -10,6 +10,7 @@ div.container {
 	width: 100%;
 	height: 100%;
 	min-height: 500px;
+	min-width: 1000px;
 	left: 0%;
 	background: #FFF4C3;
 	animation-duration: 0.8s;
@@ -20,6 +21,7 @@ div.container {
 div.header {
 	width: 100%;
 	height: 60px;
+	min-width: 1000px;
 	top: 0;
 	left: 0;
 	text-align: center;
@@ -109,8 +111,18 @@ li.picture {
 	width: 960px;
 	height: 540px;
 	margin: 1% auto 0 auto;
-	top: 10%;
+	top: 9%;
 	position: relative;
+}
+#refresh {
+	width: 40px;
+	height: 40px;
+	top: 12px;
+	right: 38%;
+	background: url('png/refresh.png');
+	background-size: 100% 100%;
+	cursor: pointer;
+	position: absolute;
 }
 #check-button {
 	width: 22px;
@@ -170,14 +182,35 @@ span.text {
 }
 #restart-button {
 	width: 200px;
-	height: 100px;
+	height: 150px;
+	text-align: center;
+	border-radius: 20px;
+	border: 3px solid gold;
 	top: -50%;
-	background: blue;
+	background: white;
 	margin: 1% auto 0 auto;
-	cursor: pointer;
 	display: none;
 	z-index: 10000;
 	position: relative;
+}
+#restart-title {
+	font-family: Verdana;
+	font-size: 26px;
+	top: 20px;
+	left: 13px;
+	position: absolute;
+}
+#restart-click {
+	color: dodgerblue;
+	font-family: Verdana;
+	top: 100px;
+	font-size: 20px;
+	cursor: pointer;
+	opacity: 0.8;
+	position: relative;
+}
+#restart-click:hover {
+	opacity: 1;
 }
 @keyframes enter {
 	from {left: 100%;}
