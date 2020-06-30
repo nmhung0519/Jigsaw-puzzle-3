@@ -43,6 +43,7 @@ for (var i = 1; i < button.length; i++) {
 loadPic();
 container[-1] = createContainer();
 header[-1] = createHeader();
+header[-1].appendChild(createTitle('Settings'));
 header[-1].appendChild(createBack());
 
 //play
@@ -259,6 +260,7 @@ addEventListener("mouseup", function () {
 			else if (count == 0) gameOver();
 			else soundMove.play();
 		}
+		else soundMove.play();
 	}
 	removeEventListener("mousemove", move);
 	target = null;

@@ -14,19 +14,24 @@ var button = [
     },
     {
         'name': 'Main Pack',
+        'headerColor': 'blue',
         'butBackground': 'green'
     },
     {
         'name': 'Faumous Paintings',
+        'headerColor': 'blue',
         'butBackground': 'green'
     }, {
         'name': 'Animals',
+        'headerColor': 'blue',
         'butBackground': 'green'
     }, {
         'name': 'Portraits',
+        'headerColor': 'blue',
         'butBackground': 'green'
     }, {
         'name': 'Landmarks',
+        'headerColor': 'blue',
         'butBackground': 'green'
     }
 ]
